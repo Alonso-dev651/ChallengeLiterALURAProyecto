@@ -1,3 +1,3 @@
 ﻿# ChallengeLiterALURAProyecto
-![Static Badge](https://img.shields.io/badge/proyecto-Spring)
-![Static Badge](https://img.shields.io/badge/status-Finish)
+![Static Badge](https://img.shields.io/badge/proyecto-spring-green)
+![Static Badge](https://img.shields.io/badge/status-finish-blue)
