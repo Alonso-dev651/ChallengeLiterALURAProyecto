@@ -44,6 +44,9 @@ public class Principal {
                 case 1:
                     buscarLibro();
                     break;
+                case 2:
+                    listarLibroRegistrados();
+                    break;
                 case 0:
                     System.out.println("Finalizó el programa. ¡Gracias por usar la aplicacion!");
                     break;
@@ -77,41 +80,94 @@ public class Principal {
     }
 
     private Datos getDatosLibros() {
-        System.out.println("Escribe el nombre del libro que deseas buscar");
+        System.out.println("""
+                *****************************************
+                |Por favor, escribe el nombre del libro |
+                |que deseas buscar:                     |
+                *****************************************
+                """);
         var nombreLibro = teclado.nextLine().toLowerCase().replace(" ", "%20");
+
+        System.out.println("""
+                *****************************************
+                Consultando la API para obtener datos del libro...
+                *****************************************
+                """);
         var json = consumoAPI.obtenerDatos(URL_BASE + nombreLibro);
+
+        System.out.println("""
+                *****************************************
+                Respuesta de la API obtenida:
+                *****************************************
+                """);
         System.out.println(json);
         return conversor.obtenerDatos(json, Datos.class);
     }
 
     private void buscarLibro() {
-        Datos datos = getDatosLibros();
+        try {
+            Datos datos = getDatosLibros();
 
-        Optional<DatosLibro> newLibro = datos.resultados().stream()
-                .findFirst();
+            Optional<DatosLibro> newLibro = datos.resultados().stream()
+                    .findFirst();
 
-        if (newLibro.isPresent()) {
-            Libro libro = new Libro(newLibro.get());
-            Autor autor = new Autor(newLibro.get().autor().getFirst());
+            if (newLibro.isPresent()) {
+                Libro libro = new Libro(newLibro.get());
+                Autor autor = new Autor(newLibro.get().autor().getFirst());
 
-            if (repositorioLibro.existsByTitulo(libro.getTitulo())) {
-                System.out.println("Este libro ya se encuentra en la base de datos");
-            } else {
-                var autorExistente = repositorioAutor.findByNombreContainsIgnoreCase(autor.getNombre());
-                if (autorExistente.isPresent()) {
-                    var autorDelLibro = autorExistente.get();
-                    libro.setAutor(autorDelLibro);
-                    repositorioLibro.save(libro);
+                if (repositorioLibro.existsByTitulo(libro.getTitulo())) {
+                    System.out.println("""
+                            *****************************************
+                            El libro ya está registrado en la base de datos.
+                            *****************************************
+                            """);
                 } else {
-                    autor.setListaLibros(libro);
-                    repositorioAutor.save(autor);
-                    repositorioLibro.save(libro);
+                    System.out.println("""
+                            *****************************************
+                            El libro no está en la base de datos. Procesando su registro...
+                            *****************************************
+                            """);
+                    var autorExistente = repositorioAutor.findByNombreContainsIgnoreCase(autor.getNombre());
+                    if (autorExistente.isPresent()) {
+                        var autorDelLibro = autorExistente.get();
+                        libro.setAutor(autorDelLibro);
+                        repositorioLibro.save(libro);
+                        System.out.println("""
+                                *****************************************
+                                El autor ya existía en la base de datos
+                                Se ha vinculado el libro con este autor
+                                *****************************************
+                                """);
+                    } else {
+                        autor.setListaLibros(libro);
+                        repositorioAutor.save(autor);
+                        repositorioLibro.save(libro);
+                        System.out.println("""
+                                *****************************************
+                                El autor y el libro han sido registrados en la base de datos.
+                                *****************************************
+                                """);
+                    }
+                    System.out.println("""
+                            *****************************************
+                            El libro ha sido registrado exitosamente.
+                            *****************************************
+                            """);
+                    System.out.println(libro);
                 }
-                System.out.println(libro);
-                System.out.println("Se ingreso libro");
+            } else {
+                System.out.println("""
+                        *****************************************
+                        No se encontró ningún libro que coincida con la búsqueda.
+                        *****************************************
+                        """);
             }
-        } else {
-            System.out.println("No se encontro un libro");
+        } catch (Exception e) {
+            System.out.println("Se produjo un error al insertar el libro: " + e.getMessage());
         }
+    }
+
+    public void listarLibroRegistrados(){
+
     }
 }
