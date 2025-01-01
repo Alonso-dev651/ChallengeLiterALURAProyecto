@@ -47,6 +47,12 @@ public class Principal {
                 case 2:
                     listarLibroRegistrados();
                     break;
+                case 3:
+                    listarAutoresRegitrados();
+                    break;
+                case 4:
+                    buscarAutoresVivoEnUnYear();
+                    break;
                 case 0:
                     System.out.println("Finalizó el programa. ¡Gracias por usar la aplicacion!");
                     break;
@@ -167,7 +173,34 @@ public class Principal {
         }
     }
 
-    public void listarLibroRegistrados(){
+    public void listarLibroRegistrados() {
+        System.out.println("""
+                *****************************************
+                Libros registrados en la Base de datos
+                *****************************************
+                """);
+        var libros = repositorioLibro.findAll();
+        libros.forEach(System.out::println);
+    }
 
+    public void listarAutoresRegitrados() {
+        System.out.println("""
+                *****************************************
+                Autores registrados en la Base de datos
+                *****************************************
+                """);
+        var autores = repositorioAutor.findAll();
+        autores.forEach(System.out::println);
+    }
+
+    public void buscarAutoresVivoEnUnYear(){
+        System.out.println("""
+                *****************************************
+                Ingrese el año a buscar autor vivo:
+                *****************************************
+                """);
+        var year = teclado.nextInt();
+        var autoresVivos = repositorioAutor.autoresVivoDuranteEseYear(year);
+        autoresVivos.forEach(System.out::println);
     }
 }
