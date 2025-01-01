@@ -57,7 +57,11 @@ public class Principal {
                     buscarLibroPorIdioma();
                     break;
                 case 0:
-                    System.out.println("Finalizó el programa. ¡Gracias por usar la aplicacion!");
+                    System.out.println("""
+                            *****************************************
+                            Finalizó el programa. ¡Gracias por usar la aplicacion!
+                            *****************************************
+                            """);
                     break;
                 default:
                     System.out.println("Eliga una opcion valida");
@@ -196,7 +200,7 @@ public class Principal {
         autores.forEach(System.out::println);
     }
 
-    public void buscarAutoresVivoEnUnYear(){
+    public void buscarAutoresVivoEnUnYear() {
         System.out.println("""
                 *****************************************
                 Ingrese el año a buscar autor vivo:
@@ -207,7 +211,7 @@ public class Principal {
         autoresVivos.forEach(System.out::println);
     }
 
-    public void buscarLibroPorIdioma(){
+    public void buscarLibroPorIdioma() {
         System.out.println("""
                 *****************************************
                 Ingrese el idioma a buscar:
@@ -217,13 +221,13 @@ public class Principal {
                 """);
         var idioma = teclado.nextLine();
         var listaLibros = repositorioLibro.librosPorIdioma(idioma);
-        if (listaLibros.isEmpty()){
+        if (listaLibros.isEmpty()) {
             System.out.println("""
                     *****************************************
                     No se encontro ningun libro en ese idioma
                     *****************************************
                     """);
-        }else{
+        } else {
             listaLibros.forEach(System.out::println);
         }
     }
